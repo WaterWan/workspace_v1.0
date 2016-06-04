@@ -10,7 +10,7 @@ import service.IOService;
 import ui.MainFrame;
 
 public class ClientRunner {
-	private RemoteHelper remoteHelper;
+	public RemoteHelper remoteHelper;
 	
 	public ClientRunner() {
 		linkToServer();
