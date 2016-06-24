@@ -13,7 +13,7 @@ public class ExecuteServiceImpl implements ExecuteService {
 	 */
 	@Override
 	public String execute(String code, String param) throws RemoteException {
-		int LENGTH = code.toCharArray().length;
+		int LENGTH = 30000;
 		// 最终结果
 		String result = "";
 
