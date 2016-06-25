@@ -75,7 +75,7 @@ public class MainFrame extends JFrame {
 
 	class MenuItemActionListener implements ActionListener {
 		/**
-		 * 子菜单响应事件
+		 * 子菜单响应事�?
 		 */
 		@Override
 		public void actionPerformed(ActionEvent e) {
