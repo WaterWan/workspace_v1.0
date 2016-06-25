@@ -10,7 +10,6 @@ public class RemoteHelper {
 	private Remote remote;
 	private static RemoteHelper remoteHelper = new RemoteHelper();
 	public static RemoteHelper getInstance(){
-		System.out.println("getInstance");
 		return remoteHelper;
 	}
 	
@@ -32,7 +31,6 @@ public class RemoteHelper {
 	}
 	
 	public ExecuteService getExecuteService() {
-		System.out.println("getExecuteService");
 		return (ExecuteService)remote;
 	}
 }
