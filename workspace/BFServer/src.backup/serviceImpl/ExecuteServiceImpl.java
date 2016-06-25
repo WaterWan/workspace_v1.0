@@ -111,5 +111,11 @@ public class ExecuteServiceImpl implements ExecuteService {
 		}
 		return result;
 	}
+//	public static void main(String[] args) throws RemoteException {
+//		String code = "++++++++++[>+++++++>++++++++++>+++>+<<<<-] >++.>+.+++++++..+++.>++.<<+++++++++++++++. >.+++.------.--------.>+.>. ";
+//		String param = "";
+//		ExecuteServiceImpl esi = new ExecuteServiceImpl();
+//		System.out.println(esi.execute(code, param));
+//	}
 
 }

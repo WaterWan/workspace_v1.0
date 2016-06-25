@@ -14,6 +14,7 @@ import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import javax.swing.JPanel;
 import javax.swing.JTextArea;
 
 import img.ImgSystem;
@@ -35,6 +36,8 @@ public class MainFrame extends JFrame {
 		JMenuBar menuBar = new JMenuBar();
 		JMenu fileMenu = new JMenu("File");
 		menuBar.add(fileMenu);
+		
+		
 		JMenuItem newMenuItem = new JMenuItem("New");
 		fileMenu.add(newMenuItem);
 		JMenuItem openMenuItem = new JMenuItem("Open");
@@ -48,12 +51,12 @@ public class MainFrame extends JFrame {
 		newMenuItem.addActionListener(new MenuItemActionListener());
 		openMenuItem.addActionListener(new MenuItemActionListener());
 		saveMenuItem.addActionListener(new SaveActionListener());
-		runMenuItem.addActionListener(new MenuItemActionListener());
+		runMenuItem.addActionListener(new RunActionListener());
 
 		textArea = new JTextArea();
 		textArea.setMargin(new Insets(10, 10, 10, 10));
 		textArea.setBackground(Color.WHITE);
-		frame.add(textArea, BorderLayout.CENTER);
+		frame.getContentPane().add(textArea, BorderLayout.CENTER);
 
 		// 显示结果
 		resultLabel = new JLabel();
@@ -97,10 +100,33 @@ public class MainFrame extends JFrame {
 			String code = textArea.getText();
 			try {
 				RemoteHelper.getInstance().getIOService().writeFile(code, "admin", "code");
+				System.out.println("Save action finishes");
 			} catch (RemoteException e1) {
 				e1.printStackTrace();
 			}
 		}
 
+	}
+	
+	class RunActionListener implements ActionListener {
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			resultLabel.setText("Run....");
+			String code = "++++++++++[>+++++++>++++++++++>+++>+<<<<-] >++.>+.+++++++..+++.>++.<<+++++++++++++++. >.+++.------.--------.>+.>. ";
+			String param = "";
+			try {
+				System.out.println("try");
+				String result = "1234321";
+				result = RemoteHelper.getInstance().getExecuteService().execute(code, param);
+				System.out.println("result = " + result);
+				System.out.println("get...");
+				resultLabel.setText(result);
+				System.out.println("Succeed!");
+			} catch (Exception e2) {
+				// TODO: handle exception
+			}
+		}
+		
 	}
 }
