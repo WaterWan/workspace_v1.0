@@ -1,4 +1,4 @@
-//请不要修改本文件名
+//请不要修改本文件�?
 package serviceImpl;
 
 import java.rmi.RemoteException;
@@ -14,15 +14,15 @@ public class ExecuteServiceImpl implements ExecuteService {
 	@Override
 	public String execute(String code, String param) throws RemoteException {
 		int LENGTH = code.toCharArray().length;
-		// 最终结果
+		// �?终结�?
 		String result = "";
 
 		// 标记第几个pc
 		int count = 0;
-		// 标记代码到哪里
+		// 标记代码到哪�?
 		int index = 0;
 		int pointerCount = 0;
-		// ',' 中第多少个
+		// ',' 中第多少�?
 		int scanNum = 0;
 		char[] pc = new char[LENGTH];
 //		Scanner scanner = new Scanner(System.in);
