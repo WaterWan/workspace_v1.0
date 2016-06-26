@@ -70,6 +70,10 @@ public class MainFrame extends JFrame {
 		menuBar.add(userMenu);
 		JMenu codeMenu = new JMenu("Code");
 		menuBar.add(codeMenu);
+		JMenu inputMenu = new JMenu("Input");
+		menuBar.add(inputMenu);
+		JMenu resultMenu = new JMenu("Result");
+		menuBar.add(resultMenu);
 		
 
 		JMenuItem newMenuItem = new JMenuItem("New");
@@ -96,7 +100,18 @@ public class MainFrame extends JFrame {
 		codeMenu.add(enlargeCodeMenuItem);
 		JMenuItem shrinkCodeMenuItem = new JMenuItem("Shrink");
 		codeMenu.add(shrinkCodeMenuItem);
-
+		
+		JMenuItem enlargeInputMenuItem = new JMenuItem("Enlarge");
+		inputMenu.add(enlargeInputMenuItem);
+		JMenuItem shrinkInputMenuItem = new JMenuItem("Shrink");
+		inputMenu.add(shrinkInputMenuItem);
+		
+		
+		JMenuItem enlargeResultMenuItem = new JMenuItem("Enlarge");
+		resultMenu.add(enlargeResultMenuItem);
+		JMenuItem shrinkResultMenuitem = new JMenuItem("Shrink");
+		resultMenu.add(shrinkResultMenuitem);
+		
 		newMenuItem.addActionListener(new NewActionLister());
 		openMenuItem.addActionListener(new OpenActionListener());
 		saveMenuItem.addActionListener(new SaveActionListener());
@@ -105,6 +120,10 @@ public class MainFrame extends JFrame {
 		registerMenuItem.addActionListener(new RegisterActionListener());
 		enlargeCodeMenuItem.addActionListener(new EnlargeCodeActionListener());
 		shrinkCodeMenuItem.addActionListener(new ShrinkCodeActionListener());
+		enlargeInputMenuItem.addActionListener(new EnlargeInputActionListener());
+		shrinkInputMenuItem.addActionListener(new ShrinkInputActionListener());
+		enlargeResultMenuItem.addActionListener(new EnlargeResultActionListener());
+		shrinkResultMenuitem.addActionListener(new ShrinkResultActionListener());
 		// TODO: loginMenuItem.addActionListener
 		// TODO: logoutMenuItem.addActionListener
 		
@@ -158,7 +177,6 @@ public class MainFrame extends JFrame {
 	}
 
 	class OpenActionListener implements ActionListener {
-
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			
@@ -244,7 +262,39 @@ public class MainFrame extends JFrame {
 			if (codeSize >= 11) {
 				codeSize = cs.changeFontSize(codeArea, codeSize, -2);
 			}
-			
 		}
+	}
+	
+	class EnlargeInputActionListener implements ActionListener {
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			inputSize = cs.changeFontSize(inputArea, inputSize, 2);
+		}
+	}
+	
+	class ShrinkInputActionListener implements ActionListener {
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			if (inputSize >= 11) {
+				inputSize = cs.changeFontSize(inputArea, inputSize, -2);
+			}
+		}
+	}
+	
+	class EnlargeResultActionListener implements ActionListener {
+		@Override
+		public void actionPerformed(ActionEvent e) {
+				resultSize = cs.changeFontSize(resultLabel, resultSize, 2);
+		}
+	}
+	
+	class ShrinkResultActionListener implements ActionListener {
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			if (resultSize >= 11) {
+				resultSize = cs.changeFontSize(resultLabel, resultSize, -2);
+			}
+		}
+		
 	}
 }
