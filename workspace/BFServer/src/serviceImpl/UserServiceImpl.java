@@ -20,7 +20,6 @@ public class UserServiceImpl implements UserService{
 
 	@Override
 	public String register(String username, String password) throws RemoteException {
-		// TODO Auto-generated method stub
 		if (!StringDeal.checkUserName(username)) {
 			return "用户名不合法";
 		}
@@ -39,21 +38,12 @@ public class UserServiceImpl implements UserService{
 				psw.createNewFile();
 				return "注册成功";
 			} catch (Exception e) {
-				// TODO: handle exception
 			}
 		}
 		return null;
 	}
 	
-	public static void main(String[] args) {
-		UserServiceImpl usi = new UserServiceImpl();
-		try {
-			System.out.println(usi.register("haimian宝宝", "123456"));
-		} catch (RemoteException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
 		
-	}
+	
 
 }

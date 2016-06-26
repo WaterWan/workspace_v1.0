@@ -26,13 +26,11 @@ public class IOServiceImpl implements IOService{
 
 	@Override
 	public String readFile(String userId, String fileName) {
-		// TODO Auto-generated method stub
 		return "OK";
 	}
 
 	@Override
 	public String readFileList(String userId) {
-		// TODO Auto-generated method stub
 		return "OK";
 	}
 	

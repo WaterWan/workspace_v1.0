@@ -1,12 +1,8 @@
 package ui;
 
-import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
-import java.awt.Graphics;
-import java.awt.Insets;
-import java.awt.MenuItem;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -18,7 +14,6 @@ import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
-import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 
@@ -27,20 +22,27 @@ import rmi.RemoteHelper;
 
 public class MainFrame extends JFrame {
 	private JFrame frame;
-	private JTextArea textArea;
+	private JTextArea codeArea;
 	private JTextArea inputArea;
 	private JLabel resultLabel;
 	private JLabel remindLabel;
 	private JLabel inputLabel;
 	private int frameWidth = 1200;
 	private int frameHeight = 800;
+	private String username;
+	private String password;
 	private String code;
 	private String param;
 	private String result;
 	private Font myFont;
-	private Font areaFont;
-	private int areaSize = 15;
+	private Font codeAreaFont;
+	private Font inputAreaFont;
+	private Font resultFont;
+	private int codeSize = 15;
+	private int inputSize = 15;
+	private int resultSize = 15;
 	private int offset = 20;
+	private ChangeStyle cs;
 
 	public MainFrame() {
 		// 创建窗体
@@ -48,8 +50,12 @@ public class MainFrame extends JFrame {
 		// frame.setLayout(new BorderLayout());
 		frame.setLayout(null);
 
+		cs = new ChangeStyle();
+		
 		myFont = new Font("TimesRoman", Font.PLAIN, 20);
-		areaFont = new Font("TimesRoman", Font.PLAIN, areaSize);
+		codeAreaFont = new Font("TimesRoman", Font.PLAIN, codeSize);
+		inputAreaFont = new Font("TimesRoman", Font.PLAIN, inputSize);
+		resultFont = new Font("TimesRoman", Font.PLAIN, resultSize);
 		frame.setFont(myFont);
 		JMenuBar menuBar = new JMenuBar();
 		frame.setJMenuBar(menuBar);
@@ -62,6 +68,8 @@ public class MainFrame extends JFrame {
 		menuBar.add(versionMenu);
 		JMenu userMenu = new JMenu("User");
 		menuBar.add(userMenu);
+		JMenu codeMenu = new JMenu("Code");
+		menuBar.add(codeMenu);
 		
 
 		JMenuItem newMenuItem = new JMenuItem("New");
@@ -83,24 +91,33 @@ public class MainFrame extends JFrame {
 		userMenu.add(loginMenuItem);
 		JMenuItem logoutMenuItem = new JMenuItem("Logout");
 		userMenu.add(logoutMenuItem);
+		
+		JMenuItem enlargeCodeMenuItem = new JMenuItem("Enlarge");
+		codeMenu.add(enlargeCodeMenuItem);
+		JMenuItem shrinkCodeMenuItem = new JMenuItem("Shrink");
+		codeMenu.add(shrinkCodeMenuItem);
 
-		newMenuItem.addActionListener(new MenuItemActionListener());
-		openMenuItem.addActionListener(new MenuItemActionListener());
+		newMenuItem.addActionListener(new NewActionLister());
+		openMenuItem.addActionListener(new OpenActionListener());
 		saveMenuItem.addActionListener(new SaveActionListener());
 		runMenuItem.addActionListener(new RunActionListener());
 		exitMenuItem.addActionListener(new ExitActionListener());
-		// TODO: registerMenu.addActionListener
+		registerMenuItem.addActionListener(new RegisterActionListener());
+		enlargeCodeMenuItem.addActionListener(new EnlargeCodeActionListener());
+		shrinkCodeMenuItem.addActionListener(new ShrinkCodeActionListener());
+		// TODO: loginMenuItem.addActionListener
+		// TODO: logoutMenuItem.addActionListener
 		
-
-		textArea = new JTextArea();
-		textArea.setFont(areaFont);
-		textArea.setBackground(Color.WHITE);
-		JScrollPane jsp = new JScrollPane(textArea);
+		
+		codeArea = new JTextArea();
+		codeArea.setFont(codeAreaFont);
+		codeArea.setBackground(Color.WHITE);
+		JScrollPane jsp = new JScrollPane(codeArea);
 		jsp.setBounds(0, 0, frameWidth, frameHeight / 2);
 		frame.getContentPane().add(jsp);
 
 		inputArea = new JTextArea();
-		inputArea.setFont(areaFont);
+		inputArea.setFont(inputAreaFont);
 		inputArea.setBackground(Color.WHITE);
 		JScrollPane inputJsp = new JScrollPane(inputArea);
 		inputJsp.setBounds(0, frameHeight / 2 + offset * 2, frameWidth / 2 - offset * 4, frameHeight / 2 - offset * 7);
@@ -131,7 +148,8 @@ public class MainFrame extends JFrame {
 		frame.setVisible(true);
 
 		resultLabel = new JLabel();
-		resultLabel.setBounds(frameWidth / 2, frameHeight / 2 + offset * 3, 200, 200);
+		resultLabel.setBounds(frameWidth / 2, frameHeight / 2 , 200, 200);
+		resultLabel.setFont(resultFont);
 		frame.add(resultLabel);
 
 		// 设置图标
@@ -139,28 +157,23 @@ public class MainFrame extends JFrame {
 		frame.setVisible(true);
 	}
 
-	class MenuItemActionListener implements ActionListener {
-		/**
-		 * 子菜单响应事件
-		 */
+	class OpenActionListener implements ActionListener {
+
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			String cmd = e.getActionCommand();
-			if (cmd.equals("Open")) {
-				textArea.setText("Open");
-			} else if (cmd.equals("Save")) {
-				textArea.setText("Save");
-			} else if (cmd.equals("Run")) {
-				resultLabel.setText("Hello, result");
-			}
+			
+			// TODO 实现打开文件功能
+			resultLabel.setText("open!");
+			
 		}
+		
 	}
 
 	class SaveActionListener implements ActionListener {
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			code = textArea.getText();
+			code = codeArea.getText();
 			try {
 				RemoteHelper.getInstance().getIOService().writeFile(code, "admin", "code");
 				System.out.println("Save action finishes");
@@ -170,12 +183,25 @@ public class MainFrame extends JFrame {
 		}
 
 	}
+	
+	class NewActionLister implements ActionListener {
 
+		public void actionPerformed(ActionEvent e) {
+			
+			// TODO:实现新建功能
+			resultLabel.setText("new");
+		}
+	}
+	
+	/**
+	 * 代码运行
+	 * @author Water
+	 *
+	 */
 	class RunActionListener implements ActionListener {
-
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			code = textArea.getText();
+			code = codeArea.getText();
 			param = inputArea.getText();
 			try {
 				result = "";
@@ -186,7 +212,6 @@ public class MainFrame extends JFrame {
 	}
 	
 	class ExitActionListener implements ActionListener {
-
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			// TODO: 还有一些情况没有判断
@@ -195,6 +220,31 @@ public class MainFrame extends JFrame {
 				System.exit(0);
 			}
 		}
-		
+	}
+	
+	class RegisterActionListener implements ActionListener {
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			// TODO 注册事件
+			
+		}
+	}
+	
+	class EnlargeCodeActionListener implements ActionListener {
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			codeSize = cs.changeFontSize(codeArea, codeSize, 2);
+		}
+	}
+	
+	class ShrinkCodeActionListener implements ActionListener {
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			if (codeSize >= 11) {
+				codeSize = cs.changeFontSize(codeArea, codeSize, -2);
+			}
+			
+		}
 	}
 }

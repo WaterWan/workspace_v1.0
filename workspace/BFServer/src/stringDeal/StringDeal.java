@@ -18,7 +18,4 @@ public class StringDeal {
 		return m.matches();
 	}
 	
-	public static void main(String[] args) {
-		System.out.println(checkUserName("hehe"));
-	}
 }
