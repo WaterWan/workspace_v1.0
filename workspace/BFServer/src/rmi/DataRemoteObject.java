@@ -55,7 +55,6 @@ public class DataRemoteObject extends UnicastRemoteObject implements IOService, 
 	}
 	
 	public String execute(String code, String param) throws RemoteException {
-		System.out.println("execute");
 		return executeService.execute(code, param);
 	}
 

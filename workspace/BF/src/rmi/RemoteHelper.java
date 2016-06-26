@@ -21,12 +21,10 @@ public class RemoteHelper {
 	}
 	
 	public IOService getIOService(){
-		System.out.println("getIOService");
 		return (IOService)remote;
 	}
 	
 	public UserService getUserService(){
-		System.out.println("getUserService");
 		return (UserService)remote;
 	}
 	

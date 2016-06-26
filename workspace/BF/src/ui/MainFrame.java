@@ -35,6 +35,8 @@ public class MainFrame extends JFrame {
 	private String param;
 	private String result;
 	private Font myFont;
+	private Font areaFont;
+	private int areaSize = 15;
 	private int offset = 20;
 
 	public MainFrame() {
@@ -43,12 +45,16 @@ public class MainFrame extends JFrame {
 		// frame.setLayout(new BorderLayout());
 		frame.setLayout(null);
 
-		myFont = new Font("TimesRoman", Font.PLAIN, 15);
+		myFont = new Font("TimesRoman", Font.PLAIN, 20);
+		areaFont = new Font("TimesRoman", Font.PLAIN, areaSize);
 		frame.setFont(myFont);
 		JMenuBar menuBar = new JMenuBar();
 		JMenu fileMenu = new JMenu("File");
 		menuBar.add(fileMenu);
 		fileMenu.setBounds(0, 0, 0, 0);
+		JMenu runMenu = new JMenu("Run");
+		menuBar.add(runMenu);
+		
 
 		JMenuItem newMenuItem = new JMenuItem("New");
 		fileMenu.add(newMenuItem);
@@ -56,8 +62,9 @@ public class MainFrame extends JFrame {
 		fileMenu.add(openMenuItem);
 		JMenuItem saveMenuItem = new JMenuItem("Save");
 		fileMenu.add(saveMenuItem);
-		JMenuItem runMenuItem = new JMenuItem("Run");
-		fileMenu.add(runMenuItem);
+		
+		JMenuItem runMenuItem = new JMenuItem("execute");
+		runMenu.add(runMenuItem);
 		frame.setJMenuBar(menuBar);
 
 		newMenuItem.addActionListener(new MenuItemActionListener());
@@ -66,12 +73,14 @@ public class MainFrame extends JFrame {
 		runMenuItem.addActionListener(new RunActionListener());
 
 		textArea = new JTextArea();
+		textArea.setFont(areaFont);
 		textArea.setBackground(Color.WHITE);
 		JScrollPane jsp = new JScrollPane(textArea);
 		jsp.setBounds(0, 0, frameWidth, frameHeight / 2);
 		frame.getContentPane().add(jsp);
 
 		inputArea = new JTextArea();
+		inputArea.setFont(areaFont);
 		inputArea.setBackground(Color.WHITE);
 		JScrollPane inputJsp = new JScrollPane(inputArea);
 		inputJsp.setBounds(0, frameHeight / 2 + offset * 2, frameWidth / 2 - offset * 3, frameHeight / 2 - offset * 7);
@@ -88,11 +97,13 @@ public class MainFrame extends JFrame {
 		remindLabel = new JLabel();
 		remindLabel.setText("Result:");
 		remindLabel.setFont(myFont);
-		remindLabel.setBounds(frameWidth / 2, frameHeight / 2 + offset, 50, 20);
+		remindLabel.setBounds(frameWidth / 2, frameHeight / 2 + offset, 100, 30);
 		frame.add(remindLabel);
 
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setSize(frameWidth, frameHeight);
+		// 不允许改变窗口大小
+		frame.setResizable(false);
 		// 获取屏幕尺寸
 		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 		// 居中显示
@@ -101,7 +112,6 @@ public class MainFrame extends JFrame {
 
 		resultLabel = new JLabel();
 		resultLabel.setBounds(frameWidth / 2, frameHeight / 2 + offset * 3, 200, 200);
-		resultLabel.setText("1111");
 		frame.add(resultLabel);
 
 		// 设置图标
@@ -148,12 +158,9 @@ public class MainFrame extends JFrame {
 			code = textArea.getText();
 			param = inputArea.getText();
 			try {
-				System.out.println("try");
 				result = "";
 				result = RemoteHelper.getInstance().getExecuteService().execute(code, param);
-				System.out.println("get...");
 				resultLabel.setText(result);
-				System.out.println("Succeed!");
 			} catch (Exception e2) {
 				// TODO: handle exception
 			}
