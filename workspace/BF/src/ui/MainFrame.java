@@ -6,6 +6,7 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Insets;
+import java.awt.MenuItem;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -16,6 +17,7 @@ import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
@@ -24,6 +26,7 @@ import img.ImgSystem;
 import rmi.RemoteHelper;
 
 public class MainFrame extends JFrame {
+	private JFrame frame;
 	private JTextArea textArea;
 	private JTextArea inputArea;
 	private JLabel resultLabel;
@@ -41,7 +44,7 @@ public class MainFrame extends JFrame {
 
 	public MainFrame() {
 		// 创建窗体
-		JFrame frame = new JFrame("BF Client");
+		frame = new JFrame("BF Client");
 		// frame.setLayout(new BorderLayout());
 		frame.setLayout(null);
 
@@ -49,11 +52,16 @@ public class MainFrame extends JFrame {
 		areaFont = new Font("TimesRoman", Font.PLAIN, areaSize);
 		frame.setFont(myFont);
 		JMenuBar menuBar = new JMenuBar();
+		frame.setJMenuBar(menuBar);
 		JMenu fileMenu = new JMenu("File");
 		menuBar.add(fileMenu);
 		fileMenu.setBounds(0, 0, 0, 0);
 		JMenu runMenu = new JMenu("Run");
 		menuBar.add(runMenu);
+		JMenu versionMenu = new JMenu("Version");
+		menuBar.add(versionMenu);
+		JMenu userMenu = new JMenu("User");
+		menuBar.add(userMenu);
 		
 
 		JMenuItem newMenuItem = new JMenuItem("New");
@@ -62,15 +70,27 @@ public class MainFrame extends JFrame {
 		fileMenu.add(openMenuItem);
 		JMenuItem saveMenuItem = new JMenuItem("Save");
 		fileMenu.add(saveMenuItem);
+		JMenuItem exitMenuItem = new JMenuItem("Exit");
+		fileMenu.add(exitMenuItem);
 		
-		JMenuItem runMenuItem = new JMenuItem("execute");
+		JMenuItem runMenuItem = new JMenuItem("Execute");
 		runMenu.add(runMenuItem);
-		frame.setJMenuBar(menuBar);
+		
+		
+		JMenuItem registerMenuItem = new JMenuItem("Register");
+		userMenu.add(registerMenuItem);
+		JMenuItem loginMenuItem = new JMenuItem("Login");
+		userMenu.add(loginMenuItem);
+		JMenuItem logoutMenuItem = new JMenuItem("Logout");
+		userMenu.add(logoutMenuItem);
 
 		newMenuItem.addActionListener(new MenuItemActionListener());
 		openMenuItem.addActionListener(new MenuItemActionListener());
 		saveMenuItem.addActionListener(new SaveActionListener());
 		runMenuItem.addActionListener(new RunActionListener());
+		exitMenuItem.addActionListener(new ExitActionListener());
+		// TODO: registerMenu.addActionListener
+		
 
 		textArea = new JTextArea();
 		textArea.setFont(areaFont);
@@ -83,14 +103,14 @@ public class MainFrame extends JFrame {
 		inputArea.setFont(areaFont);
 		inputArea.setBackground(Color.WHITE);
 		JScrollPane inputJsp = new JScrollPane(inputArea);
-		inputJsp.setBounds(0, frameHeight / 2 + offset * 2, frameWidth / 2 - offset * 3, frameHeight / 2 - offset * 7);
+		inputJsp.setBounds(0, frameHeight / 2 + offset * 2, frameWidth / 2 - offset * 4, frameHeight / 2 - offset * 7);
 		frame.getContentPane().add(inputJsp);
 
 		// 显示结果
 		inputLabel = new JLabel();
 		inputLabel.setText("Input:");
 		inputLabel.setFont(myFont);
-		inputLabel.setBounds(0, frameHeight / 2 + offset - 5, 50, 20);
+		inputLabel.setBounds(0, frameHeight / 2 + offset - 5, 50, 30);
 		frame.add(inputLabel);
 
 		// 显示结果
@@ -161,10 +181,20 @@ public class MainFrame extends JFrame {
 				result = "";
 				result = RemoteHelper.getInstance().getExecuteService().execute(code, param);
 				resultLabel.setText(result);
-			} catch (Exception e2) {
-				// TODO: handle exception
+			} catch (Exception e2) {}
+		}
+	}
+	
+	class ExitActionListener implements ActionListener {
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			// TODO: 还有一些情况没有判断
+			int option = JOptionPane.showConfirmDialog(frame, "您是否确定要退出？", "退出", JOptionPane.YES_NO_OPTION);
+			if (option == JOptionPane.YES_OPTION) {
+				System.exit(0);
 			}
 		}
-
+		
 	}
 }

@@ -58,4 +58,10 @@ public class DataRemoteObject extends UnicastRemoteObject implements IOService, 
 		return executeService.execute(code, param);
 	}
 
+	@Override
+	public String register(String username, String password) throws RemoteException {
+		// TODO Auto-generated method stub
+		return userService.register(username, password);
+	}
+
 }
