@@ -143,7 +143,7 @@ public class MainFrame extends JFrame {
 		enlargeResultMenuItem.addActionListener(new EnlargeResultActionListener());
 		shrinkResultMenuitem.addActionListener(new ShrinkResultActionListener());
 		loginMenuItem.addActionListener(new LoginActionListener());
-		logoutMenuItem.addActionListener(new LoginActionListener());
+		logoutMenuItem.addActionListener(new LogoutActionListener());
 		
 		
 		codeArea = new JTextArea();
@@ -211,7 +211,8 @@ public class MainFrame extends JFrame {
 		public void actionPerformed(ActionEvent e) {
 			code = codeArea.getText();
 			try {
-				RemoteHelper.getInstance().getIOService().writeFile(code, "admin", "code");
+				// TODO:writeFile的具体实现需要修改一下 
+				RemoteHelper.getInstance().getIOService().writeFile(code, username, "filename");
 			} catch (RemoteException e1) {
 				e1.printStackTrace();
 			}
@@ -236,6 +237,7 @@ public class MainFrame extends JFrame {
 	class RunActionListener implements ActionListener {
 		@Override
 		public void actionPerformed(ActionEvent e) {
+			System.out.println(username + " " + password);
 			code = codeArea.getText();
 			param = inputArea.getText();
 			try {
@@ -258,10 +260,8 @@ public class MainFrame extends JFrame {
 	}
 	
 	class RegisterActionListener implements ActionListener {
-
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			// TODO 注册事件
 			RegisterFrame registerFrame = new RegisterFrame();
 		}
 	}
@@ -326,6 +326,7 @@ public class MainFrame extends JFrame {
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			username = "";
+			password = "";
 		}
 		
 	}
