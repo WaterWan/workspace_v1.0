@@ -29,11 +29,13 @@ public class MainFrame extends JFrame {
 	private JLabel inputLabel;
 	private int frameWidth = 1200;
 	private int frameHeight = 800;
-	private String username;
-	private String password;
+	private static String username;
+	private static String password;
 	private String code;
 	private String param;
 	private String result;
+
+
 	private Font myFont;
 	private Font codeAreaFont;
 	private Font inputAreaFont;
@@ -43,6 +45,22 @@ public class MainFrame extends JFrame {
 	private int resultSize = 15;
 	private int offset = 20;
 	private ChangeStyle cs;
+
+	public String getUsername() {
+		return username;
+	}
+
+	public static void setUsername(String name) {
+		username = name;
+	}
+
+	public String getPassword() {
+		return password;
+	}
+
+	public static void setPassword(String word) {
+		password = word;
+	}
 
 	public MainFrame() {
 		// 创建窗体
@@ -124,8 +142,8 @@ public class MainFrame extends JFrame {
 		shrinkInputMenuItem.addActionListener(new ShrinkInputActionListener());
 		enlargeResultMenuItem.addActionListener(new EnlargeResultActionListener());
 		shrinkResultMenuitem.addActionListener(new ShrinkResultActionListener());
-		// TODO: loginMenuItem.addActionListener
-		// TODO: logoutMenuItem.addActionListener
+		loginMenuItem.addActionListener(new LoginActionListener());
+		logoutMenuItem.addActionListener(new LoginActionListener());
 		
 		
 		codeArea = new JTextArea();
@@ -294,6 +312,22 @@ public class MainFrame extends JFrame {
 				resultSize = cs.changeFontSize(resultLabel, resultSize, -2);
 			}
 		}
+	}
+	
+	class LoginActionListener implements ActionListener {
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			LoginFrame loginFrame = new LoginFrame();
+		}
+	}
+	
+	
+	class LogoutActionListener implements ActionListener {
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			username = "";
+		}
 		
 	}
+
 }

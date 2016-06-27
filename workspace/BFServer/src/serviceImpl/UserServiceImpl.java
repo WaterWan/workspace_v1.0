@@ -10,6 +10,14 @@ public class UserServiceImpl implements UserService{
 
 	@Override
 	public boolean login(String username, String password) throws RemoteException {
+		File file = new File("user/" + username);
+		if (!file.isDirectory()) {
+			return false;
+		}
+		File passwordFile = new File("user/" + username + "/" + password);
+		if (!(passwordFile.exists() && !passwordFile.isDirectory())) {
+			return false;
+		}
 		return true;
 	}
 
