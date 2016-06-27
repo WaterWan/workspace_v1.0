@@ -194,7 +194,6 @@ public class MainFrame extends JFrame {
 			code = codeArea.getText();
 			try {
 				RemoteHelper.getInstance().getIOService().writeFile(code, "admin", "code");
-				System.out.println("Save action finishes");
 			} catch (RemoteException e1) {
 				e1.printStackTrace();
 			}
@@ -245,7 +244,7 @@ public class MainFrame extends JFrame {
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			// TODO 注册事件
-			
+			RegisterFrame registerFrame = new RegisterFrame();
 		}
 	}
 	
