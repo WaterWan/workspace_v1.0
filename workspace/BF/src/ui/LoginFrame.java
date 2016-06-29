@@ -71,15 +71,15 @@ public class LoginFrame extends JFrame{
 	class LoginActionListener implements ActionListener {
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			username = usernameTextField.getText();
-			password = turnCharsToString(passwordField.getPassword());
+			String tempUsername = usernameTextField.getText();
+			String tempPassword = turnCharsToString(passwordField.getPassword());
 			boolean canLogin = false;
 			try {
-				canLogin = RemoteHelper.getInstance().getUserService().login(username, password);
+				canLogin = RemoteHelper.getInstance().getUserService().login(tempUsername, tempPassword);
 				if (canLogin) {
 					resultLabel.setText("Succeed!");
-					MainFrame.setUsername(username);
-					MainFrame.setPassword(password);
+					MainFrame.setUsername(tempUsername);
+					MainFrame.setPassword(tempPassword);
 				}else {
 					MainFrame.setUsername("");
 					MainFrame.setPassword("");

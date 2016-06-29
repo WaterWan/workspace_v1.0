@@ -27,10 +27,12 @@ public class MainFrame extends JFrame {
 	private JLabel resultLabel;
 	private JLabel remindLabel;
 	private JLabel inputLabel;
+	private JLabel outputLabel;
 	private int frameWidth = 1200;
 	private int frameHeight = 800;
 	private static String username;
 	private static String password;
+	private static String filename;
 	private String code;
 	private String param;
 	private String result;
@@ -62,6 +64,14 @@ public class MainFrame extends JFrame {
 		password = word;
 	}
 
+	public static String getFilename() {
+		return filename;
+	}
+
+	public static void setFilename(String filename) {
+		MainFrame.filename = filename;
+	}
+
 	public MainFrame() {
 		// 创建窗体
 		frame = new JFrame("BF Client");
@@ -69,6 +79,8 @@ public class MainFrame extends JFrame {
 		frame.setLayout(null);
 
 		cs = new ChangeStyle();
+		username = "";
+		filename = "";
 		
 		myFont = new Font("TimesRoman", Font.PLAIN, 20);
 		codeAreaFont = new Font("TimesRoman", Font.PLAIN, codeSize);
@@ -152,7 +164,6 @@ public class MainFrame extends JFrame {
 		JScrollPane jsp = new JScrollPane(codeArea);
 		jsp.setBounds(0, 0, frameWidth, frameHeight / 2);
 		frame.getContentPane().add(jsp);
-
 		inputArea = new JTextArea();
 		inputArea.setFont(inputAreaFont);
 		inputArea.setBackground(Color.WHITE);
@@ -188,6 +199,10 @@ public class MainFrame extends JFrame {
 		resultLabel.setBounds(frameWidth / 2, frameHeight / 2 , 200, 200);
 		resultLabel.setFont(resultFont);
 		frame.add(resultLabel);
+		
+		outputLabel = new JLabel();
+		outputLabel.setBounds(0, frameHeight - 5 * offset, 200, 30);
+		frame.add(outputLabel);
 
 		// 设置图标
 		frame.setIconImage(ImgSystem.LOGO);
@@ -211,8 +226,14 @@ public class MainFrame extends JFrame {
 		public void actionPerformed(ActionEvent e) {
 			code = codeArea.getText();
 			try {
+				if (!username.equals("")) {
+					RemoteHelper.getInstance().getIOService().writeFile(code, username, "filename");
+					outputLabel.setText("登录成功");
+				}else {
+					outputLabel.setText("尚未登录");
+				}
 				// TODO:writeFile的具体实现需要修改一下 
-				RemoteHelper.getInstance().getIOService().writeFile(code, username, "filename");
+				
 			} catch (RemoteException e1) {
 				e1.printStackTrace();
 			}
