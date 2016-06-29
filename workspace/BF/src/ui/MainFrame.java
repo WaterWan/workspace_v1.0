@@ -22,7 +22,12 @@ import rmi.RemoteHelper;
 
 public class MainFrame extends JFrame {
 	private JFrame frame;
-	private JTextArea codeArea;
+	private static JTextArea codeArea;
+	public static JTextArea getCodeArea() {
+		return codeArea;
+	}
+
+
 	private JTextArea inputArea;
 	private JLabel resultLabel;
 	private JLabel remindLabel;
@@ -56,6 +61,13 @@ public class MainFrame extends JFrame {
 	private int resultSize = 15;
 	private int offset = 20;
 	private ChangeStyle cs;
+	private static JMenu versionMenu;
+	
+
+
+	public static JMenu getVersionMenu() {
+		return versionMenu;
+	}
 
 	public static String getCode() {
 		return code;
@@ -107,8 +119,6 @@ public class MainFrame extends JFrame {
 		fileMenu.setBounds(0, 0, 0, 0);
 		JMenu runMenu = new JMenu("Run");
 		menuBar.add(runMenu);
-		JMenu versionMenu = new JMenu("Version");
-		menuBar.add(versionMenu);
 		JMenu userMenu = new JMenu("User");
 		menuBar.add(userMenu);
 		JMenu codeMenu = new JMenu("Code");
@@ -117,6 +127,8 @@ public class MainFrame extends JFrame {
 		menuBar.add(inputMenu);
 		JMenu resultMenu = new JMenu("Result");
 		menuBar.add(resultMenu);
+		versionMenu = new JMenu("Version");
+		menuBar.add(versionMenu);
 		
 
 		JMenuItem newMenuItem = new JMenuItem("New");
@@ -229,7 +241,7 @@ public class MainFrame extends JFrame {
 			
 			// TODO 实现打开文件功能
 			resultLabel.setText("open!");
-			
+			OpenFrame openFrame = new OpenFrame();
 		}
 		
 	}
@@ -264,9 +276,8 @@ public class MainFrame extends JFrame {
 	class NewActionLister implements ActionListener {
 
 		public void actionPerformed(ActionEvent e) {
+			new FileNameFrame();
 			
-			// TODO:实现新建功能
-			resultLabel.setText("new");
 		}
 	}
 	

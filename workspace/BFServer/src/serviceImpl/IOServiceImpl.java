@@ -1,9 +1,13 @@
 package serviceImpl;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.rmi.RemoteException;
+import java.util.ArrayList;
 
 import myTime.TestTime;
 import service.IOService;
@@ -12,7 +16,6 @@ public class IOServiceImpl implements IOService{
 	
 	@Override
 	public boolean writeFile(String file, String userId, String fileName) {
-		System.out.println("writeFile");
 		File f = new File("user/" + userId + "/" + fileName + "/" + TestTime.getDate());
 		File pack = new File("user/" + userId + "/" + fileName);
 		try {
@@ -32,7 +35,36 @@ public class IOServiceImpl implements IOService{
 
 	@Override
 	public String readFile(String userId, String fileName) {
-		return "OK";
+		String path = "user/" + userId +"/" + fileName;
+		File file = new File(path);
+		String code = "";
+		String sepe = System.getProperty("line.separator");
+		FileReader fileReader;
+		try {
+			fileReader = new FileReader(file);
+			BufferedReader bufferedReader = new BufferedReader(fileReader);
+			String tempString;
+			try {
+				while ((tempString = bufferedReader.readLine()) != null) {
+					code += tempString;
+					code += sepe;
+				}
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			try {
+				fileReader.close();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return code;
 	}
 
 	@Override
@@ -47,6 +79,42 @@ public class IOServiceImpl implements IOService{
 			return true;
 		}
 		return false;
+	}
+
+	@Override
+	public String[] getFileNames(String path) throws RemoteException {
+		ArrayList<String> temp = new ArrayList<>();
+		File file = new File(path);
+		File[] array = file.listFiles();
+
+		for (int i = 0; i < array.length; i++) {
+			if (array[i].isDirectory()) {
+				temp.add(array[i].getName());
+			} 
+		}
+		String[] directoryNames = new String[temp.size()];
+		for (int i = 0; i < temp.size(); i++) {
+			directoryNames[i] = (String)(temp.get(i));
+		}
+		return directoryNames;
+	}
+
+	@Override
+	public String[] getVersionNames(String path) throws RemoteException {
+		ArrayList<String> temp = new ArrayList<>();
+		File file = new File(path);
+		File[] array = file.listFiles();
+
+		for (int i = 0; i < array.length; i++) {
+			if (array[i].isFile()) {
+				temp.add(array[i].getName());
+			} 
+		}
+		String[] versionNames = new String[temp.size()];
+		for (int i = 0; i < temp.size(); i++) {
+			versionNames[i] = (String)(temp.get(i));
+		}
+		return versionNames;
 	}
 	
 }

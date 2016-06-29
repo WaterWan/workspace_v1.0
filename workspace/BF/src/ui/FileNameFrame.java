@@ -23,7 +23,7 @@ public class FileNameFrame extends JFrame {
 	private JLabel resultLabel;
 	
 	public FileNameFrame() {
-		frame = new JFrame("Login");
+		frame = new JFrame("File");
 		frame.setLayout(null);
 		frame.setVisible(true);
 		frame.setResizable(false);
@@ -39,7 +39,6 @@ public class FileNameFrame extends JFrame {
 		frame.getContentPane().add(filenameTextField);
 		
 		resultLabel = new JLabel();
-		resultLabel.setText("2333");
 		resultLabel.setBounds(30, 90, 200, 20);
 		frame.getContentPane().add(resultLabel);
 		ensure = new JButton("确定");

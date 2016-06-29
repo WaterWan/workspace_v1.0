@@ -60,8 +60,17 @@ public class DataRemoteObject extends UnicastRemoteObject implements IOService, 
 
 	@Override
 	public boolean fileExists(String username, String filename) throws RemoteException {
-		// TODO Auto-generated method stub
 		return iOService.fileExists(username, filename);
+	}
+
+	@Override
+	public String[] getFileNames(String path) throws RemoteException {
+		return iOService.getFileNames(path);
+	}
+
+	@Override
+	public String[] getVersionNames(String path) throws RemoteException {
+		return iOService.getVersionNames(path);
 	}
 
 }

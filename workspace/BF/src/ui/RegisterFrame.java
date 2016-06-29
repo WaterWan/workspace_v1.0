@@ -71,7 +71,11 @@ public class RegisterFrame extends JFrame {
 			try {
 				username = usernameTextField.getText();
 				password = turnCharsToString(passwordField.getPassword());
-				resultLabel.setText(RemoteHelper.getInstance().getUserService().register(username, password));
+				String res = RemoteHelper.getInstance().getUserService().register(username, password);
+				resultLabel.setText(res);
+				if (res.equals("注册成功")) {
+					frame.setVisible(false);
+				}
 			} catch (RemoteException e1) {
 				e1.printStackTrace();
 			}
