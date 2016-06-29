@@ -27,13 +27,22 @@ public class MainFrame extends JFrame {
 	private JLabel resultLabel;
 	private JLabel remindLabel;
 	private JLabel inputLabel;
-	private JLabel outputLabel;
+	private static JLabel outputLabel;
+	public static JLabel getOutputLabel() {
+		return outputLabel;
+	}
+
+	public static void setOutputLabel(JLabel outputLabel) {
+		MainFrame.outputLabel = outputLabel;
+	}
+
+
 	private int frameWidth = 1200;
 	private int frameHeight = 800;
 	private static String username;
 	private static String password;
 	private static String filename;
-	private String code;
+	private static String code;
 	private String param;
 	private String result;
 
@@ -48,7 +57,11 @@ public class MainFrame extends JFrame {
 	private int offset = 20;
 	private ChangeStyle cs;
 
-	public String getUsername() {
+	public static String getCode() {
+		return code;
+	}
+
+	public static String getUsername() {
 		return username;
 	}
 
@@ -203,6 +216,7 @@ public class MainFrame extends JFrame {
 		outputLabel = new JLabel();
 		outputLabel.setBounds(0, frameHeight - 5 * offset, 200, 30);
 		frame.add(outputLabel);
+		outputLabel.setText("尚未登录");
 
 		// 设置图标
 		frame.setIconImage(ImgSystem.LOGO);
@@ -227,10 +241,16 @@ public class MainFrame extends JFrame {
 			code = codeArea.getText();
 			try {
 				if (!username.equals("")) {
-					RemoteHelper.getInstance().getIOService().writeFile(code, username, "filename");
-					outputLabel.setText("登录成功");
+					if (!filename.equals("")) {
+						RemoteHelper.getInstance().getIOService().writeFile(code, username, filename);
+					} else {
+						code = codeArea.getText();
+						FileNameFrame fnf = new FileNameFrame();
+						
+					}
+					outputLabel.setText("保存成功");
 				}else {
-					outputLabel.setText("尚未登录");
+					outputLabel.setText("尚未登录，无法保存");
 				}
 				// TODO:writeFile的具体实现需要修改一下 
 				
@@ -258,7 +278,6 @@ public class MainFrame extends JFrame {
 	class RunActionListener implements ActionListener {
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			System.out.println(username + " " + password);
 			code = codeArea.getText();
 			param = inputArea.getText();
 			try {
@@ -275,6 +294,14 @@ public class MainFrame extends JFrame {
 			// TODO: 还有一些情况没有判断
 			int option = JOptionPane.showConfirmDialog(frame, "您是否确定要退出？", "退出", JOptionPane.YES_NO_OPTION);
 			if (option == JOptionPane.YES_OPTION) {
+				try {
+					username = username.equals("") ? "SystemTemp" : username;
+					filename = filename.equals("") ? "SystemTemp" : filename;
+					RemoteHelper.getInstance().getIOService().writeFile(code, username, filename);
+				} catch (RemoteException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
 				System.exit(0);
 			}
 		}
@@ -346,8 +373,17 @@ public class MainFrame extends JFrame {
 	class LogoutActionListener implements ActionListener {
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			username = "";
-			password = "";
+			if (username.equals("")) {
+				outputLabel.setText("尚未登录，无需退出");
+			} else {
+				int option = JOptionPane.showConfirmDialog(frame, "您是否确定要登出？", "退出", JOptionPane.YES_NO_OPTION);
+				if (option == JOptionPane.YES_OPTION) {
+					username = "";
+					password = "";
+					outputLabel.setText("尚未登录");
+				}
+			}
+
 		}
 		
 	}

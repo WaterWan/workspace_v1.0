@@ -3,6 +3,7 @@ package serviceImpl;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.rmi.RemoteException;
 
 import myTime.TestTime;
 import service.IOService;
@@ -37,6 +38,15 @@ public class IOServiceImpl implements IOService{
 	@Override
 	public String readFileList(String userId) {
 		return "OK";
+	}
+
+	@Override
+	public boolean fileExists(String username, String filename) throws RemoteException {
+		File pack = new File("user/" + username + "/" + filename);
+		if (pack.exists() && pack.isDirectory()) {
+			return true;
+		}
+		return false;
 	}
 	
 }

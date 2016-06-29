@@ -14,7 +14,7 @@ import javax.swing.JTextField;
 
 import rmi.RemoteHelper;
 
-public class LoginFrame extends JFrame{
+public class LoginFrame extends JFrame {
 	private JFrame frame;
 	public String username;
 	public String password;
@@ -57,7 +57,6 @@ public class LoginFrame extends JFrame{
 		loginButton.setBounds(100, 120, 90, 20);
 		frame.add(loginButton);
 		loginButton.addActionListener(new LoginActionListener());
-		username = "cao";
 	}
 
 	private String turnCharsToString(char[] chars) {
@@ -77,13 +76,16 @@ public class LoginFrame extends JFrame{
 			try {
 				canLogin = RemoteHelper.getInstance().getUserService().login(tempUsername, tempPassword);
 				if (canLogin) {
-					resultLabel.setText("Succeed!");
+					MainFrame.getOutputLabel().setText("登录成功!");
 					MainFrame.setUsername(tempUsername);
 					MainFrame.setPassword(tempPassword);
+					frame.setVisible(false);
+					
 				}else {
 					MainFrame.setUsername("");
 					MainFrame.setPassword("");
-					resultLabel.setText("Failed!");
+					passwordField.setText("");
+					resultLabel.setText("账号不存在或密码有误!");
 				}
 			} catch (RemoteException e1) {
 				e1.printStackTrace();
