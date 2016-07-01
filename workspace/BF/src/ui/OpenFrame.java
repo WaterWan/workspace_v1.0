@@ -23,7 +23,6 @@ public class OpenFrame extends JFrame{
 	private JComboBox<String> fileBox;
 	private String filepath;
 	private JButton ensure;
-	private int index = 0;
 	
 	
 	public OpenFrame() {
@@ -57,11 +56,13 @@ public class OpenFrame extends JFrame{
 			public void actionPerformed(ActionEvent arg0) {
 				MainFrame.getOutputLabel().setText((String)fileBox.getSelectedItem());
 				MainFrame.setFilename((String)fileBox.getSelectedItem());
+				frame.setVisible(false);
 				String path = "user/" + MainFrame.getUsername() + "/" + (String)fileBox.getSelectedItem();
 				try {
 					String[] versionNames = RemoteHelper.getInstance().getIOService().getVersionNames(path);
-					MainFrame.getOutputLabel().setText(versionNames[0]);
- 					for (int i = 0; i < versionNames.length; i++) {
+ 					MainFrame.getVersionMenu().removeAll();
+					for (int i = 0; i < versionNames.length; i++) {
+ 						final int index = i;
  						JMenuItem jmi = new JMenuItem(versionNames[i]);
 						MainFrame.getVersionMenu().add(jmi);
 						jmi.addActionListener(new ActionListener() {
@@ -70,6 +71,7 @@ public class OpenFrame extends JFrame{
 								String code = "";
 								try {
 									System.out.println(index + " index");
+									MainFrame.getOutputLabel().setText(MainFrame.getFilename() + "/" + versionNames[index]);
 									code = RemoteHelper.getInstance().getIOService().readFile(MainFrame.getUsername(), MainFrame.getFilename() + "/" + versionNames[index]);
 								} catch (RemoteException e1) {
 									// TODO Auto-generated catch block
