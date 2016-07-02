@@ -16,11 +16,15 @@ public class IOServiceImpl implements IOService{
 	
 	@Override
 	public boolean writeFile(String file, String userId, String fileName) {
-		File f = new File("user/" + userId + "/" + fileName + "/" + TestTime.getDate());
+
 		File pack = new File("user/" + userId + "/" + fileName);
 		try {
 			if (!(pack.exists() && pack.isDirectory())) {
 				pack.mkdir();
+			}
+			File f = new File("user/" + userId + "/" + fileName + "/" + TestTime.getDate());
+			if (!f.exists() || !f.isFile()) {
+				f.createNewFile();
 			}
 			FileWriter fw = new FileWriter(f, false);
 			fw.write(file);

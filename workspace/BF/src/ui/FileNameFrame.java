@@ -4,10 +4,12 @@ import java.awt.Dimension;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.rmi.RemoteException;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JMenuItem;
 import javax.swing.JTextField;
 
 import rmi.RemoteHelper;
@@ -49,13 +51,13 @@ public class FileNameFrame extends JFrame {
 				if (!filename.equals("")) {
 					try {
 						if (!RemoteHelper.getInstance().getIOService().fileExists(MainFrame.getUsername(), filename)) {
+							frame.setVisible(false);
+							frame.dispose();
 							MainFrame.setFilename(filename);
 							MainFrame.getOutputLabel().setText("文件名为 " + filename);
 							RemoteHelper.getInstance().getIOService().writeFile(MainFrame.getCode(), MainFrame.getUsername(), filename);
-							resultLabel.setText("可以保存");
-							frame.setVisible(false);
 						} else {
-							resultLabel.setText("该文件名已存在");
+							resultLabel.setText("该文件名已存在或不合法");
 						}
 					} catch (Exception e2) {
 						// TODO: handle exception

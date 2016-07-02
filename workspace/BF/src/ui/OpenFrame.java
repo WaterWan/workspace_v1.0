@@ -56,6 +56,7 @@ public class OpenFrame extends JFrame{
 			public void actionPerformed(ActionEvent arg0) {
 				MainFrame.getOutputLabel().setText((String)fileBox.getSelectedItem());
 				MainFrame.setFilename((String)fileBox.getSelectedItem());
+				MainFrame.getCodeArea().setText("");
 				frame.setVisible(false);
 				String path = "user/" + MainFrame.getUsername() + "/" + (String)fileBox.getSelectedItem();
 				try {
@@ -70,7 +71,6 @@ public class OpenFrame extends JFrame{
 							public void actionPerformed(ActionEvent e) {
 								String code = "";
 								try {
-									System.out.println(index + " index");
 									MainFrame.getOutputLabel().setText(MainFrame.getFilename() + "/" + versionNames[index]);
 									code = RemoteHelper.getInstance().getIOService().readFile(MainFrame.getUsername(), MainFrame.getFilename() + "/" + versionNames[index]);
 								} catch (RemoteException e1) {

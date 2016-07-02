@@ -238,10 +238,12 @@ public class MainFrame extends JFrame {
 	class OpenActionListener implements ActionListener {
 		@Override
 		public void actionPerformed(ActionEvent e) {
+			if (!username.equals("")) {
+				OpenFrame openFrame = new OpenFrame();
+			}else {
+				outputLabel.setText("尚未登录，无法打开文件");
+			}
 			
-			// TODO 实现打开文件功能
-			resultLabel.setText("open!");
-			OpenFrame openFrame = new OpenFrame();
 		}
 		
 	}
@@ -276,7 +278,12 @@ public class MainFrame extends JFrame {
 	class NewActionLister implements ActionListener {
 
 		public void actionPerformed(ActionEvent e) {
-			new FileNameFrame();
+			if (!username.equals("")) {
+				new FileNameFrame();
+			}else {
+				outputLabel.setText("尚未登录，无法新建文件");
+			}
+			
 			
 		}
 	}
@@ -306,14 +313,20 @@ public class MainFrame extends JFrame {
 			int option = JOptionPane.showConfirmDialog(frame, "您是否确定要退出？", "退出", JOptionPane.YES_NO_OPTION);
 			if (option == JOptionPane.YES_OPTION) {
 				try {
-					username = username.equals("") ? "SystemTemp" : username;
-					filename = filename.equals("") ? "SystemTemp" : filename;
+					if (username.equals("")) {
+						MainFrame.setUsername("SystemTemp");
+					}
+					if (filename.equals("")) {
+						MainFrame.setFilename("TempFile");
+					}
 					RemoteHelper.getInstance().getIOService().writeFile(code, username, filename);
 				} catch (RemoteException e1) {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
+				} finally {
+					System.exit(0);
 				}
-				System.exit(0);
+				
 			}
 		}
 	}
