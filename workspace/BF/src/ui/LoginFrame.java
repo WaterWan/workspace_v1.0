@@ -12,6 +12,7 @@ import javax.swing.JLabel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 
+import function.MyJPasswordField;
 import rmi.RemoteHelper;
 
 public class LoginFrame extends JFrame {
@@ -50,7 +51,7 @@ public class LoginFrame extends JFrame {
 		usernameTextField = new JTextField();
 		usernameTextField.setBounds(100, 30, 150, 20);
 		frame.getContentPane().add(usernameTextField);
-		passwordField = new JPasswordField();
+		passwordField = new MyJPasswordField();
 		passwordField.setBounds(100, 50, 150, 20);
 		frame.getContentPane().add(passwordField);
 		JButton loginButton = new JButton("Login");
