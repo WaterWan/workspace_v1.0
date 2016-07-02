@@ -29,25 +29,11 @@ public class MainFrame extends JFrame {
 	private ArrayList<String> redo_undo;
 	private int codeIndex;
 	private static JTextArea codeArea;
-	public static JTextArea getCodeArea() {
-		return codeArea;
-	}
-
-
 	private JTextArea inputArea;
 	private JLabel resultLabel;
 	private JLabel remindLabel;
 	private JLabel inputLabel;
 	private static JLabel outputLabel;
-	public static JLabel getOutputLabel() {
-		return outputLabel;
-	}
-
-	public static void setOutputLabel(JLabel outputLabel) {
-		MainFrame.outputLabel = outputLabel;
-	}
-
-
 	private int frameWidth = 1200;
 	private int frameHeight = 800;
 	private static String username;
@@ -56,7 +42,6 @@ public class MainFrame extends JFrame {
 	private static String code;
 	private String param;
 	private String result;
-
 
 	private Font myFont;
 	private Font codeAreaFont;
@@ -70,8 +55,14 @@ public class MainFrame extends JFrame {
 	private Document document;
 	private static JMenu versionMenu;
 	
+	public static JLabel getOutputLabel() {
+		return outputLabel;
+	}
 
-
+	public static void setOutputLabel(JLabel outputLabel) {
+		MainFrame.outputLabel = outputLabel;
+	}
+	
 	public static JMenu getVersionMenu() {
 		return versionMenu;
 	}
@@ -102,6 +93,10 @@ public class MainFrame extends JFrame {
 
 	public static void setFilename(String filename) {
 		MainFrame.filename = filename;
+	}
+	
+	public static JTextArea getCodeArea() {
+		return codeArea;
 	}
 
 	public MainFrame() {
