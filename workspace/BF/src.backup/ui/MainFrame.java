@@ -1,106 +1,315 @@
 package ui;
 
-import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.Insets;
+import java.awt.Font;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.rmi.RemoteException;
+import java.util.ArrayList;
 
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
-import javax.swing.JPanel;
+import javax.swing.JOptionPane;
+import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
+import javax.swing.text.Document;
 
 import img.ImgSystem;
 import rmi.RemoteHelper;
 
-
 public class MainFrame extends JFrame {
-	private JTextArea textArea;
-	private JLabel resultLabel;
-	private int frameWidth = 500;
-	private int frameHeight = 400;
+	private JFrame frame;
+	private ArrayList<String> redo_undo;
+	private int codeIndex;
+	private static JTextArea codeArea;
+	public static JTextArea getCodeArea() {
+		return codeArea;
+	}
 
+
+	private JTextArea inputArea;
+	private JLabel resultLabel;
+	private JLabel remindLabel;
+	private JLabel inputLabel;
+	private static JLabel outputLabel;
+	public static JLabel getOutputLabel() {
+		return outputLabel;
+	}
+
+	public static void setOutputLabel(JLabel outputLabel) {
+		MainFrame.outputLabel = outputLabel;
+	}
+
+
+	private int frameWidth = 1200;
+	private int frameHeight = 800;
+	private static String username;
+	private static String password;
+	private static String filename;
+	private static String code;
+	private String param;
+	private String result;
+
+
+	private Font myFont;
+	private Font codeAreaFont;
+	private Font inputAreaFont;
+	private Font resultFont;
+	private int codeSize = 15;
+	private int inputSize = 15;
+	private int resultSize = 15;
+	private int offset = 20;
+	private ChangeStyle cs;
+	private Document document;
+	private static JMenu versionMenu;
+	
+
+
+	public static JMenu getVersionMenu() {
+		return versionMenu;
+	}
+
+	public static String getCode() {
+		return code;
+	}
+
+	public static String getUsername() {
+		return username;
+	}
+
+	public static void setUsername(String name) {
+		username = name;
+	}
+
+	public String getPassword() {
+		return password;
+	}
+
+	public static void setPassword(String word) {
+		password = word;
+	}
+
+	public static String getFilename() {
+		return filename;
+	}
+
+	public static void setFilename(String filename) {
+		MainFrame.filename = filename;
+	}
 
 	public MainFrame() {
 		// 创建窗体
-		JFrame frame = new JFrame("BF Client");
-		frame.setLayout(new BorderLayout());
-
+		frame = new JFrame("BF Client");
+		// frame.setLayout(new BorderLayout());
+		frame.setLayout(null);
+		redo_undo = new ArrayList<>();
+		redo_undo.add("");
+		cs = new ChangeStyle();
+		username = "";
+		filename = "";
+		codeIndex = 0;
+		
+		myFont = new Font("TimesRoman", Font.PLAIN, 20);
+		codeAreaFont = new Font("TimesRoman", Font.PLAIN, codeSize);
+		inputAreaFont = new Font("TimesRoman", Font.PLAIN, inputSize);
+		resultFont = new Font("TimesRoman", Font.PLAIN, resultSize);
+		frame.setFont(myFont);
 		JMenuBar menuBar = new JMenuBar();
+		frame.setJMenuBar(menuBar);
 		JMenu fileMenu = new JMenu("File");
 		menuBar.add(fileMenu);
+		fileMenu.setBounds(0, 0, 0, 0);
+		JMenu runMenu = new JMenu("Run");
+		menuBar.add(runMenu);
+		JMenu userMenu = new JMenu("User");
+		menuBar.add(userMenu);
+		JMenu codeMenu = new JMenu("Code");
+		menuBar.add(codeMenu);
+		JMenu inputMenu = new JMenu("Input");
+		menuBar.add(inputMenu);
+		JMenu resultMenu = new JMenu("Result");
+		menuBar.add(resultMenu);
+		versionMenu = new JMenu("Version");
+		menuBar.add(versionMenu);
+		JMenu redo_undoMenu = new JMenu("R&U");
+		menuBar.add(redo_undoMenu);
 		
-		
+
 		JMenuItem newMenuItem = new JMenuItem("New");
 		fileMenu.add(newMenuItem);
 		JMenuItem openMenuItem = new JMenuItem("Open");
 		fileMenu.add(openMenuItem);
 		JMenuItem saveMenuItem = new JMenuItem("Save");
 		fileMenu.add(saveMenuItem);
-		JMenuItem runMenuItem = new JMenuItem("Run");
-		fileMenu.add(runMenuItem);
-		frame.setJMenuBar(menuBar);
-
-		newMenuItem.addActionListener(new MenuItemActionListener());
-		openMenuItem.addActionListener(new MenuItemActionListener());
+		JMenuItem exitMenuItem = new JMenuItem("Exit");
+		fileMenu.add(exitMenuItem);
+		
+		JMenuItem runMenuItem = new JMenuItem("Execute");
+		runMenu.add(runMenuItem);
+		
+		
+		JMenuItem registerMenuItem = new JMenuItem("Register");
+		userMenu.add(registerMenuItem);
+		JMenuItem loginMenuItem = new JMenuItem("Login");
+		userMenu.add(loginMenuItem);
+		JMenuItem logoutMenuItem = new JMenuItem("Logout");
+		userMenu.add(logoutMenuItem);
+		
+		JMenuItem enlargeCodeMenuItem = new JMenuItem("Enlarge");
+		codeMenu.add(enlargeCodeMenuItem);
+		JMenuItem shrinkCodeMenuItem = new JMenuItem("Shrink");
+		codeMenu.add(shrinkCodeMenuItem);
+		
+		JMenuItem enlargeInputMenuItem = new JMenuItem("Enlarge");
+		inputMenu.add(enlargeInputMenuItem);
+		JMenuItem shrinkInputMenuItem = new JMenuItem("Shrink");
+		inputMenu.add(shrinkInputMenuItem);
+		
+		
+		JMenuItem enlargeResultMenuItem = new JMenuItem("Enlarge");
+		resultMenu.add(enlargeResultMenuItem);
+		JMenuItem shrinkResultMenuitem = new JMenuItem("Shrink");
+		resultMenu.add(shrinkResultMenuitem);
+		
+		JMenuItem redoMenuItem = new JMenuItem("Redo");
+		redo_undoMenu.add(redoMenuItem);
+		JMenuItem undoMenuItem = new JMenuItem("Undo");
+		redo_undoMenu.add(undoMenuItem);
+		
+		newMenuItem.addActionListener(new NewActionLister());
+		openMenuItem.addActionListener(new OpenActionListener());
 		saveMenuItem.addActionListener(new SaveActionListener());
 		runMenuItem.addActionListener(new RunActionListener());
-
-		textArea = new JTextArea();
-		textArea.setMargin(new Insets(10, 10, 10, 10));
-		textArea.setBackground(Color.WHITE);
-		frame.getContentPane().add(textArea, BorderLayout.CENTER);
+		exitMenuItem.addActionListener(new ExitActionListener());
+		registerMenuItem.addActionListener(new RegisterActionListener());
+		enlargeCodeMenuItem.addActionListener(new EnlargeCodeActionListener());
+		shrinkCodeMenuItem.addActionListener(new ShrinkCodeActionListener());
+		enlargeInputMenuItem.addActionListener(new EnlargeInputActionListener());
+		shrinkInputMenuItem.addActionListener(new ShrinkInputActionListener());
+		enlargeResultMenuItem.addActionListener(new EnlargeResultActionListener());
+		shrinkResultMenuitem.addActionListener(new ShrinkResultActionListener());
+		loginMenuItem.addActionListener(new LoginActionListener());
+		logoutMenuItem.addActionListener(new LogoutActionListener());
+		redoMenuItem.addActionListener(new RedoActionListener());
+		undoMenuItem.addActionListener(new UndoActionListener());
+		
+		
+		codeArea = new JTextArea();
+		codeArea.setFont(codeAreaFont);
+		codeArea.setBackground(Color.WHITE);
+		document = codeArea.getDocument();
+		JScrollPane jsp = new JScrollPane(codeArea);
+		jsp.setBounds(0, 0, frameWidth, frameHeight / 2);
+		frame.getContentPane().add(jsp);
+		inputArea = new JTextArea();
+		inputArea.setFont(inputAreaFont);
+		inputArea.setBackground(Color.WHITE);
+		JScrollPane inputJsp = new JScrollPane(inputArea);
+		inputJsp.setBounds(0, frameHeight / 2 + offset * 2, frameWidth / 2 - offset * 4, frameHeight / 2 - offset * 7);
+		frame.getContentPane().add(inputJsp);
+		document.addDocumentListener(new DocumentListener() {
+			@Override
+			public void removeUpdate(DocumentEvent e) {
+				redo_undo.add(++codeIndex, codeArea.getText());
+				
+				
+				System.out.println(codeArea.getText() + "   " +codeIndex + "   " + (String)redo_undo.get(codeIndex));
+			}
+			
+			@Override
+			public void insertUpdate(DocumentEvent e) {
+				// TODO Auto-generated method stub
+				redo_undo.add(++codeIndex, codeArea.getText());
+				System.out.println(codeArea.getText() + "   " +codeIndex + "   " + (String)redo_undo.get(codeIndex));
+			}
+			
+			@Override
+			public void changedUpdate(DocumentEvent e) {
+				// TODO Auto-generated method stub
+				redo_undo.add(++codeIndex, codeArea.getText());
+				System.out.println(codeArea.getText() + "   " +codeIndex + "   " + (String)redo_undo.get(codeIndex));
+			}
+		});
 
 		// 显示结果
-		resultLabel = new JLabel();
-		resultLabel.setText("result");
-		frame.add(resultLabel, BorderLayout.SOUTH);
+		inputLabel = new JLabel();
+		inputLabel.setText("Input:");
+		inputLabel.setFont(myFont);
+		inputLabel.setBounds(0, frameHeight / 2 + offset - 5, 50, 30);
+		frame.add(inputLabel);
+
+		// 显示结果
+		remindLabel = new JLabel();
+		remindLabel.setText("Result:");
+		remindLabel.setFont(myFont);
+		remindLabel.setBounds(frameWidth / 2, frameHeight / 2 + offset, 100, 30);
+		frame.add(remindLabel);
 
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setSize(frameWidth, frameHeight);
+		// 不允许改变窗口大�?
+		frame.setResizable(false);
 		// 获取屏幕尺寸
 		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 		// 居中显示
-		frame.setLocation((screenSize.width - frameWidth) / 2, (screenSize.height - frameHeight)/2);
+		frame.setLocation((screenSize.width - frameWidth) / 2, (screenSize.height - frameHeight) / 2);
 		frame.setVisible(true);
+
+		resultLabel = new JLabel();
+		resultLabel.setBounds(frameWidth / 2, frameHeight / 2 , 200, 200);
+		resultLabel.setFont(resultFont);
+		frame.add(resultLabel);
 		
+		outputLabel = new JLabel();
+		outputLabel.setBounds(0, frameHeight - 5 * offset, 200, 30);
+		frame.add(outputLabel);
+		outputLabel.setText("尚未登录");
+
 		// 设置图标
 		frame.setIconImage(ImgSystem.LOGO);
 		frame.setVisible(true);
 	}
 
-	class MenuItemActionListener implements ActionListener {
-		/**
-		 * 子菜单响应事�?
-		 */
+	class OpenActionListener implements ActionListener {
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			String cmd = e.getActionCommand();
-			if (cmd.equals("Open")) {
-				textArea.setText("Open");
-			} else if (cmd.equals("Save")) {
-				textArea.setText("Save");
-			} else if (cmd.equals("Run")) {
-				resultLabel.setText("Hello, result");
+			if (!username.equals("")) {
+				OpenFrame openFrame = new OpenFrame();
+			}else {
+				outputLabel.setText("尚未登录，无法打�?文件");
 			}
+			
 		}
+		
 	}
 
 	class SaveActionListener implements ActionListener {
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			String code = textArea.getText();
+			code = codeArea.getText();
 			try {
-				RemoteHelper.getInstance().getIOService().writeFile(code, "admin", "code");
-				System.out.println("Save action finishes");
+				if (!username.equals("")) {
+					if (!filename.equals("")) {
+						RemoteHelper.getInstance().getIOService().writeFile(code, username, filename);
+					} else {
+						code = codeArea.getText();
+						FileNameFrame fnf = new FileNameFrame();
+						
+					}
+					outputLabel.setText("保存成功");
+				}else {
+					outputLabel.setText("尚未登录，无法保�?");
+				}
+				// TODO:writeFile的具体实现需要修改一�? 
+				
 			} catch (RemoteException e1) {
 				e1.printStackTrace();
 			}
@@ -108,25 +317,172 @@ public class MainFrame extends JFrame {
 
 	}
 	
-	class RunActionListener implements ActionListener {
+	class NewActionLister implements ActionListener {
 
+		public void actionPerformed(ActionEvent e) {
+			if (!username.equals("")) {
+				new FileNameFrame();
+			}else {
+				outputLabel.setText("尚未登录，无法新建文�?");
+			}
+			
+			
+		}
+	}
+	
+	/**
+	 * 代码运行
+	 * @author Water
+	 *
+	 */
+	class RunActionListener implements ActionListener {
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			resultLabel.setText("Run....");
-			String code = "++++++++++[>+++++++>++++++++++>+++>+<<<<-] >++.>+.+++++++..+++.>++.<<+++++++++++++++. >.+++.------.--------.>+.>. ";
-			String param = "";
+			code = codeArea.getText();
+			param = inputArea.getText();
 			try {
-				System.out.println("try");
-				String result = "1234321";
+				result = "";
 				result = RemoteHelper.getInstance().getExecuteService().execute(code, param);
-				System.out.println("result = " + result);
-				System.out.println("get...");
 				resultLabel.setText(result);
-				System.out.println("Succeed!");
-			} catch (Exception e2) {
-				// TODO: handle exception
+			} catch (Exception e2) {}
+		}
+	}
+	
+	class ExitActionListener implements ActionListener {
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			// TODO: 还有�?些情况没有判�?
+			int option = JOptionPane.showConfirmDialog(frame, "您是否确定要�?出？", "�?�?", JOptionPane.YES_NO_OPTION);
+			if (option == JOptionPane.YES_OPTION) {
+				try {
+					if (username.equals("")) {
+						MainFrame.setUsername("SystemTemp");
+					}
+					if (filename.equals("")) {
+						MainFrame.setFilename("TempFile");
+					}
+					RemoteHelper.getInstance().getIOService().writeFile(code, username, filename);
+				} catch (RemoteException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				} finally {
+					System.exit(0);
+				}
+				
 			}
+		}
+	}
+	
+	class RegisterActionListener implements ActionListener {
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			RegisterFrame registerFrame = new RegisterFrame();
+		}
+	}
+	
+	class EnlargeCodeActionListener implements ActionListener {
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			codeSize = cs.changeFontSize(codeArea, codeSize, 2);
+		}
+	}
+	
+	class ShrinkCodeActionListener implements ActionListener {
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			if (codeSize >= 11) {
+				codeSize = cs.changeFontSize(codeArea, codeSize, -2);
+			}
+		}
+	}
+	
+	class EnlargeInputActionListener implements ActionListener {
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			inputSize = cs.changeFontSize(inputArea, inputSize, 2);
+		}
+	}
+	
+	class ShrinkInputActionListener implements ActionListener {
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			if (inputSize >= 11) {
+				inputSize = cs.changeFontSize(inputArea, inputSize, -2);
+			}
+		}
+	}
+	
+	class EnlargeResultActionListener implements ActionListener {
+		@Override
+		public void actionPerformed(ActionEvent e) {
+				resultSize = cs.changeFontSize(resultLabel, resultSize, 2);
+		}
+	}
+	
+	class ShrinkResultActionListener implements ActionListener {
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			if (resultSize >= 11) {
+				resultSize = cs.changeFontSize(resultLabel, resultSize, -2);
+			}
+		}
+	}
+	
+	class LoginActionListener implements ActionListener {
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			LoginFrame loginFrame = new LoginFrame();
+		}
+	}
+	
+	
+	class LogoutActionListener implements ActionListener {
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			if (username.equals("")) {
+				outputLabel.setText("尚未登录，无�?�?�?");
+			} else {
+				int option = JOptionPane.showConfirmDialog(frame, "您是否确定要登出�?", "�?�?", JOptionPane.YES_NO_OPTION);
+				if (option == JOptionPane.YES_OPTION) {
+					username = "";
+					password = "";
+					outputLabel.setText("尚未登录");
+				}
+			}
+		}
+	}
+	
+	class UndoActionListener implements ActionListener {
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			if (codeIndex >= 0) {
+				codeIndex --;
+				codeArea.setText(redo_undo.get(codeIndex));
+				redo_undo.remove(codeIndex);
+				redo_undo.remove(codeIndex - 1);
+				codeIndex -= 2;
+			}else {
+				outputLabel.setText("Couldn't undo");
+			}
+		}
+	}
+	
+	class RedoActionListener implements ActionListener {
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			if (codeIndex < redo_undo.size() - 1) {
+				codeIndex ++;
+				codeArea.setText(redo_undo.get(codeIndex));
+				redo_undo.remove(codeIndex);
+				redo_undo.remove(codeIndex - 1);
+				codeIndex -= 2;
+			}else {
+				outputLabel.setText("Couldn't redo");
+			}
+			
+			
 		}
 		
 	}
+
 }

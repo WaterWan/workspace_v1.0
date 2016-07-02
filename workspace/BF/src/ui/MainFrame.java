@@ -7,6 +7,7 @@ import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.rmi.RemoteException;
+import java.util.ArrayList;
 
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -16,12 +17,17 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
+import javax.swing.text.Document;
 
 import img.ImgSystem;
 import rmi.RemoteHelper;
 
 public class MainFrame extends JFrame {
 	private JFrame frame;
+	private ArrayList<String> redo_undo;
+	private int codeIndex;
 	private static JTextArea codeArea;
 	public static JTextArea getCodeArea() {
 		return codeArea;
@@ -61,6 +67,7 @@ public class MainFrame extends JFrame {
 	private int resultSize = 15;
 	private int offset = 20;
 	private ChangeStyle cs;
+	private Document document;
 	private static JMenu versionMenu;
 	
 
@@ -102,10 +109,12 @@ public class MainFrame extends JFrame {
 		frame = new JFrame("BF Client");
 		// frame.setLayout(new BorderLayout());
 		frame.setLayout(null);
-
+		redo_undo = new ArrayList<>();
+		redo_undo.add("");
 		cs = new ChangeStyle();
 		username = "";
 		filename = "";
+		codeIndex = 0;
 		
 		myFont = new Font("TimesRoman", Font.PLAIN, 20);
 		codeAreaFont = new Font("TimesRoman", Font.PLAIN, codeSize);
@@ -129,6 +138,8 @@ public class MainFrame extends JFrame {
 		menuBar.add(resultMenu);
 		versionMenu = new JMenu("Version");
 		menuBar.add(versionMenu);
+		JMenu redo_undoMenu = new JMenu("R&U");
+		menuBar.add(redo_undoMenu);
 		
 
 		JMenuItem newMenuItem = new JMenuItem("New");
@@ -167,6 +178,11 @@ public class MainFrame extends JFrame {
 		JMenuItem shrinkResultMenuitem = new JMenuItem("Shrink");
 		resultMenu.add(shrinkResultMenuitem);
 		
+		JMenuItem redoMenuItem = new JMenuItem("Redo");
+		redo_undoMenu.add(redoMenuItem);
+		JMenuItem undoMenuItem = new JMenuItem("Undo");
+		redo_undoMenu.add(undoMenuItem);
+		
 		newMenuItem.addActionListener(new NewActionLister());
 		openMenuItem.addActionListener(new OpenActionListener());
 		saveMenuItem.addActionListener(new SaveActionListener());
@@ -181,11 +197,14 @@ public class MainFrame extends JFrame {
 		shrinkResultMenuitem.addActionListener(new ShrinkResultActionListener());
 		loginMenuItem.addActionListener(new LoginActionListener());
 		logoutMenuItem.addActionListener(new LogoutActionListener());
+		redoMenuItem.addActionListener(new RedoActionListener());
+		undoMenuItem.addActionListener(new UndoActionListener());
 		
 		
 		codeArea = new JTextArea();
 		codeArea.setFont(codeAreaFont);
 		codeArea.setBackground(Color.WHITE);
+		document = codeArea.getDocument();
 		JScrollPane jsp = new JScrollPane(codeArea);
 		jsp.setBounds(0, 0, frameWidth, frameHeight / 2);
 		frame.getContentPane().add(jsp);
@@ -195,6 +214,29 @@ public class MainFrame extends JFrame {
 		JScrollPane inputJsp = new JScrollPane(inputArea);
 		inputJsp.setBounds(0, frameHeight / 2 + offset * 2, frameWidth / 2 - offset * 4, frameHeight / 2 - offset * 7);
 		frame.getContentPane().add(inputJsp);
+		document.addDocumentListener(new DocumentListener() {
+			@Override
+			public void removeUpdate(DocumentEvent e) {
+				redo_undo.add(++codeIndex, codeArea.getText());
+				
+				
+				System.out.println(codeArea.getText() + "   " +codeIndex + "   " + (String)redo_undo.get(codeIndex));
+			}
+			
+			@Override
+			public void insertUpdate(DocumentEvent e) {
+				// TODO Auto-generated method stub
+				redo_undo.add(++codeIndex, codeArea.getText());
+				System.out.println(codeArea.getText() + "   " +codeIndex + "   " + (String)redo_undo.get(codeIndex));
+			}
+			
+			@Override
+			public void changedUpdate(DocumentEvent e) {
+				// TODO Auto-generated method stub
+				redo_undo.add(++codeIndex, codeArea.getText());
+				System.out.println(codeArea.getText() + "   " +codeIndex + "   " + (String)redo_undo.get(codeIndex));
+			}
+		});
 
 		// 显示结果
 		inputLabel = new JLabel();
@@ -407,7 +449,38 @@ public class MainFrame extends JFrame {
 					outputLabel.setText("尚未登录");
 				}
 			}
-
+		}
+	}
+	
+	class UndoActionListener implements ActionListener {
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			if (codeIndex >= 0) {
+				codeIndex --;
+				codeArea.setText(redo_undo.get(codeIndex));
+				redo_undo.remove(codeIndex);
+				redo_undo.remove(codeIndex - 1);
+				codeIndex -= 2;
+			}else {
+				outputLabel.setText("Couldn't undo");
+			}
+		}
+	}
+	
+	class RedoActionListener implements ActionListener {
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			if (codeIndex < redo_undo.size() - 1) {
+				codeIndex ++;
+				codeArea.setText(redo_undo.get(codeIndex));
+				redo_undo.remove(codeIndex);
+				redo_undo.remove(codeIndex - 1);
+				codeIndex -= 2;
+			}else {
+				outputLabel.setText("Couldn't redo");
+			}
+			
+			
 		}
 		
 	}

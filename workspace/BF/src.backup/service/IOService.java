@@ -9,4 +9,10 @@ public interface IOService extends Remote{
 	public String readFile(String userId, String fileName)throws RemoteException;
 	
 	public String readFileList(String userId)throws RemoteException;
+	
+	public boolean fileExists(String username, String filename) throws RemoteException;
+	
+	public String[] getFileNames(String path) throws RemoteException;
+	
+	public String[] getVersionNames(String path) throws RemoteException;
 }
